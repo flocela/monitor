@@ -2,13 +2,24 @@
 #include <unistd.h>
 #include <string>
 #include <vector>
+#include <regex>
 
 #include "linux_parser.h"
+
+#include <iostream>
+using std::cout;
 
 using std::stof;
 using std::string;
 using std::to_string;
 using std::vector;
+using std::regex;
+using std::stoi;
+std::string::size_type sz;
+namespace LinuxParser {
+  string getStringBeforeColon(string str);
+  int getkB(string str);
+}
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
@@ -35,13 +46,13 @@ string LinuxParser::OperatingSystem() {
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::Kernel() {
-  string os, kernel;
+  string os, version, kernel;
   string line;
   std::ifstream stream(kProcDirectory + kVersionFilename);
   if (stream.is_open()) {
     std::getline(stream, line);
     std::istringstream linestream(line);
-    linestream >> os >> kernel;
+    linestream >> os >> version >> kernel;
   }
   return kernel;
 }
@@ -67,7 +78,44 @@ vector<int> LinuxParser::Pids() {
 }
 
 // TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() { return 0.0; }
+float LinuxParser::MemoryUtilization() { 
+  string line;
+  string key;
+  string value;
+  std::ifstream filestream(kProcDirectory + kMeminfoFilename);
+  int mem_total = 0;
+  int mem_free  = 0;
+  int buffers   = 0;
+  int cached    = 0;
+  int s_recl    = 0;
+  int shmem     = 0;
+  if(filestream.is_open()) {
+    while(std::getline(filestream, line)) {
+      string name = getStringBeforeColon(line);
+      if(name == "MemTotal")
+        mem_total = getkB(line);
+      else if(name == "MemFree")
+        mem_free = getkB(line);
+      else if(name == "Buffers")
+        buffers = getkB(line);
+      else if (name == "Cached") {
+        cached = getkB(line);
+      }
+      else if (name == "SReclaimable") {
+        s_recl = getkB(line);
+      }
+      else if (name == "Shmem") {
+        shmem = getkB(line);
+      }
+    }
+  }
+
+  int tot_mem = mem_total - mem_free;
+  int cached_mem = cached + s_recl - shmem;
+  int non_cached = tot_mem - buffers - cached_mem;
+
+  return non_cached; 
+}
 
 // TODO: Read and return the system uptime
 long LinuxParser::UpTime() { return 0; }
@@ -113,3 +161,42 @@ string LinuxParser::User(int pid[[maybe_unused]]) { return string(); }
 // TODO: Read and return the uptime of a process
 // REMOVE: [[maybe_unused]] once you define the function
 long LinuxParser::UpTime(int pid[[maybe_unused]]) { return 0; }
+
+string LinuxParser::getStringBeforeColon(string str) {
+  int n = str.length();
+  int j = 0;
+  while (j < n) {
+    if (str[j] == ':')
+      break;
+    j++;
+  }
+  return str.substr(0, j);
+}
+
+int LinuxParser::getkB(string str) {
+  int n = str.length();
+  int j = 0;
+  int fn = 0;
+  int ln = 0;
+  while (j < n) {
+    if (str[j] == ' ') {
+      break;
+    }
+    j++;
+  }
+  while (j < n) {
+    if (str[j] != ' ') {
+      fn = j;
+      break;
+    }
+    j++;
+  }
+  while (j < n) {
+    if (str[j] == ' ') {
+      ln = j - 1;
+      break;
+    }
+    j++;
+  }
+  return stoi(str.substr(fn,ln - fn + 1), &sz);
+}
