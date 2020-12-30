@@ -198,9 +198,7 @@ string LinuxParser::Ram(int pid) {
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Uid(int pid) {
   string line = getLineStartingWith("Uid:", kProcDirectory + std::to_string(pid) + kStatusFilename);
-  if (!line.empty())
-    return getWordAt(line, 1);
-  return string(); 
+  return getWordAt(line, 1);
 }
 
 // TODO: Read and return the user associated with a process
