@@ -15,19 +15,29 @@ using std::size_t;
 using std::string;
 using std::vector;
 
+System::System()
+    : _cpu {1}
+ {
+    _system_data = LinuxParser::createSystemData();
+    populateProcesses();
+ }
+
 // TODO: Return the system's CPU
 Processor& System::Cpu() { return _cpu; }
 
-// Only returns valid processes.
-vector<Process>& System::Processes() {
+void System::populateProcesses() {
     std::vector<Process> replacement = {};
-    vector<int> pids = LinuxParser::Pids();
-    for (int pid: pids) {
+    // if the process still exists, then create an object for it.
+    // if not then it has been deleted since the vector of pids was made.
+    for (int pid: _system_data._pids) {
         Process process = _process_factory.createProcess(pid);
         if (process.isValid())
             replacement.push_back(process);
     }
     _processes = replacement;
+}
+// Only returns valid processes.
+vector<Process>& System::Processes() {
     return _processes;
 }
 

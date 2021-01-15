@@ -11,7 +11,6 @@ struct SystemData {
     std::string _os_name        = ""; // /ect/os-release
     std::string _kernel_version = ""; // /proc/version
     std::vector<int> _pids      = {};
-    int _num_of_pids            = -1;
     float _mem_total__kB        = -1; // /proc/meminfo
     float _mem_free__kB         = -1; // /proc/meminfo
     long _up_time__sec          = -1; // /proc/uptime
@@ -24,7 +23,6 @@ struct SystemData {
     long _soft_irq__ct          = -1; // /proc/stat/(line = cpu, field = 7)
     long _steal__ct             = -1; // /proc/stat/(line = cpu, field = 8)
     int _procs_running          = -1; // /proc/stat/(field = procs_running)
-    float _cpu_util             = -1.0;
 };
 
 #endif

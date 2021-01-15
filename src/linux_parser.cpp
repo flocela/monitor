@@ -40,8 +40,8 @@ namespace LinuxParser {
   // udate system_data with kernel_version from "/version"
   void updateSystemData_kernel_version(SystemData system_data);
 
-  //update system_data with cpu utilization
-  void updateCPUUtilization(Processor processor, SystemData system_data);
+  // update system_data with processor id's
+  void updateSystemPIDS(SystemData system_data);
 
   // update processor_data with data from "/proc/stat"
   void updateProcessorData_kStatFilename(ProcessorData processor_data);
@@ -78,7 +78,6 @@ namespace LinuxParser {
   // Returns sum same as getLongSumFromWordsAt(..), but returns an int.
   int getIntSumFromWordsAt(string line, vector<int> v);
 }
-
 
 ProcessData LinuxParser::createProcessData(int pid) {
   string pid_str = std::to_string(pid);
@@ -192,10 +191,23 @@ void LinuxParser::updateSystemData_kernel_version(SystemData system_data) {
   system_data._kernel_version = getWordAt(line, 2);
 }
 
-void LinuxParser::updateCPUUtilization(Processor processor, SystemData system_data) {
-  
-
-  //return result;
+void LinuxParser::updateSystemPIDS(SystemData system_data) {
+  vector<int> pids;
+  DIR* directory = opendir(kProcDirectory.c_str());
+  struct dirent* file;
+  while ((file = readdir(directory)) != nullptr) {
+    // Is this a directory?
+    if (file->d_type == DT_DIR) {
+      // Is every character of the name a digit?
+      string filename(file->d_name);
+      if (std::all_of(filename.begin(), filename.end(), isdigit)) {
+        int pid = stoi(filename);
+        pids.push_back(pid);
+      }
+    }
+  }
+  closedir(directory);
+  system_data._pids = pids;
 }
 
 ProcessorData LinuxParser::createProcessorData() {
@@ -220,7 +232,7 @@ void LinuxParser::updateProcessorData_kStatFilename(ProcessorData processor_data
     }
   }
   vector<string> items = split(stat_line);
-  processor_data._user__ct    = stol(items[1], nullptr, 10)
+  processor_data._user__ct    = stol(items[1], nullptr, 10);
   processor_data._nice__ct    = stol(items[2], nullptr, 10);
   processor_data._system__ct  = stol(items[3], nullptr, 10);
   processor_data._idle__ct    = stol(items[4], nullptr, 10);
@@ -263,6 +275,7 @@ string LinuxParser::Kernel() {
   return LinuxParser::getWordAt(line, 2);
 }
 
+// TODO Probably get rid of this.
 // BONUS: Update this to use std::filesystem
 // !!!!!!!!!!!!!!!!!!!!!!!!!! DONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 vector<int> LinuxParser::Pids() {
