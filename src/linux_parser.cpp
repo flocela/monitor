@@ -41,7 +41,15 @@ namespace LinuxParser {
   void updateSystemData_kernel_version(SystemData system_data);
 
   // update system_data with processor id's
-  void updateSystemPIDS(SystemData system_data);
+  void updateSystem_PIDS(SystemData system_data);
+
+  // update system_data with mem info from "proc/meminfo"
+  void updateSystem_mem_info(SystemData system_data);
+
+  // update system_data upTime from "/proc/uptime"
+  void updateSystem_up_time(SystemData system_data);
+
+  // update system_data with 
 
   // update processor_data with data from "/proc/stat"
   void updateProcessorData_kStatFilename(ProcessorData processor_data);
@@ -191,7 +199,7 @@ void LinuxParser::updateSystemData_kernel_version(SystemData system_data) {
   system_data._kernel_version = getWordAt(line, 2);
 }
 
-void LinuxParser::updateSystemPIDS(SystemData system_data) {
+void LinuxParser::updateSystem_PIDS(SystemData system_data) {
   vector<int> pids;
   DIR* directory = opendir(kProcDirectory.c_str());
   struct dirent* file;
@@ -208,6 +216,25 @@ void LinuxParser::updateSystemPIDS(SystemData system_data) {
   }
   closedir(directory);
   system_data._pids = pids;
+}
+
+void LinuxParser::updateSystem_mem_info(SystemData system_data) {
+  string line;
+  std::ifstream filestream(kProcDirectory + kMeminfoFilename);
+  if(filestream.is_open()) {
+    while(std::getline(filestream, line)) {
+      string name = LinuxParser::getStringBeforeColon(line);
+      if(name == "MemTotal")
+        system_data._mem_total__kB = LinuxParser::getkB(line);
+      else if(name == "MemFree")
+        system_data._mem_free__kB = LinuxParser::getkB(line);
+    }
+  }
+}
+
+void LinuxParser::updateSystem_up_time(SystemData system_data) {
+  string line = LinuxParser::getLineFromPath(kProcDirectory + kUptimeFilename);
+  system_data._up_time__sec = LinuxParser::getLongSumFromWordsAt(line, {0});
 }
 
 ProcessorData LinuxParser::createProcessorData() {
@@ -321,7 +348,6 @@ float LinuxParser::MemoryUtilization() {
 // In seconds
 // !!!!!!!!!!!!!!!!!!!!!!!!!! DONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 long LinuxParser::UpTime() {
-  string uptime;
   string line = LinuxParser::getLineFromPath(kProcDirectory + kUptimeFilename);
   return LinuxParser::getLongSumFromWordsAt(line, {0});
 }
