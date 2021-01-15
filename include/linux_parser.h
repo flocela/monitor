@@ -1,6 +1,10 @@
 #ifndef SYSTEM_PARSER_H
 #define SYSTEM_PARSER_H
 
+#include "process_data.h"
+#include "system_data.h"
+#include "processor_data.h"
+
 #include <fstream>
 #include <regex>
 #include <string>
@@ -40,7 +44,13 @@ enum CPUStates {
   kGuest_,
   kGuestNice_
 };
+
+ProcessData createProcessData(int pid);
+SystemData createSystemData();
+ProcessorData createProcessorData();
 std::vector<std::string> CpuUtilization();
+float CpuUtilizationSum();
+float CpuUtilization(int pid);
 long Jiffies();
 long ActiveJiffies();
 long ActiveJiffies(int pid);

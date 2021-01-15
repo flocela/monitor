@@ -4,8 +4,9 @@
 #include <string>
 #include <vector>
 
-#include "process.h"
+#include "process_factory.h"
 #include "processor.h"
+#include "process.h"
 
 class System {
  public:
@@ -20,8 +21,9 @@ class System {
 
   // TODO: Define any necessary private members
  private:
-  Processor cpu_ = {};
-  std::vector<Process> processes_ = {};
+  Processor _cpu = {};
+  std::vector<Process> _processes = {};
+  ProcessFactory _process_factory = ProcessFactory();
 };
 
 #endif
