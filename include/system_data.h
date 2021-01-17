@@ -20,7 +20,7 @@ struct SystemData {
     long _idle__ct              = -1; // /proc/stat/(line = cpu, field = 4)
     long _iowait__ct            = -1; // /proc/stat/(line = cpu, field = 5)
     long _irq__ct               = -1; // /proc/stat/(line = cpu, field = 6)
-    long _soft_irq__ct          = -1; // /proc/stat/(line = cpu, field = 7)
+    long _softirq__ct          = -1; // /proc/stat/(line = cpu, field = 7)
     long _steal__ct             = -1; // /proc/stat/(line = cpu, field = 8)
     int _procs_running          = -1; // /proc/stat/(field = procs_running)
 };

@@ -15,7 +15,7 @@ using std::size_t;
 using std::string;
 using std::vector;
 
-System::System()
+System::System(int processor_type, int process_type)
     : _cpu {1}
  {
     _system_data = LinuxParser::createSystemData();

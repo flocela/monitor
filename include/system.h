@@ -10,19 +10,20 @@
 #include <vector>
 
 class System {
- public:
-  System();                           // Constructor
-  Processor& Cpu();                   // TODO: See src/system.cpp
-  std::vector<Process>& Processes();  // TODO: See src/system.cpp
-  float MemoryUtilization();          // TODO: See src/system.cpp
-  long UpTime();                      // TODO: See src/system.cpp
-  int TotalProcesses();               // TODO: See src/system.cpp
-  int RunningProcesses();             // TODO: See src/system.cpp
-  std::string Kernel();               // TODO: See src/system.cpp
-  std::string OperatingSystem();      // TODO: See src/system.cpp
-  void updateSystem();
-  // TODO: Define any necessary private members
+  public:
+    System(int processor_type, int process_type);                           
+    Processor& Cpu();                   
+    std::vector<Process>& Processes();  
+    float MemoryUtilization();          
+    long UpTime();                      
+    int TotalProcesses();               
+    int RunningProcesses();             
+    std::string Kernel();               
+    std::string OperatingSystem();      
+    void updateSystem();
+  
  private:
+  
   SystemData _system_data; 
   Processor _cpu;
   std::vector<Process> _processes = {};

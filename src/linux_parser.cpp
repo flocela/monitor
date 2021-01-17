@@ -47,9 +47,10 @@ namespace LinuxParser {
   void updateSystem_mem_info(SystemData system_data);
 
   // update system_data upTime from "/proc/uptime"
-  void updateSystem_up_time(SystemData system_data);
+  void updateSystemData_up_time(SystemData system_data);
 
-  // update system_data with 
+  // update system_data with data from "proc/stat"
+  void updateSystemData_kStatFilename(SystemData system_data);
 
   // update processor_data with data from "/proc/stat"
   void updateProcessorData_kStatFilename(ProcessorData processor_data);
@@ -232,9 +233,38 @@ void LinuxParser::updateSystem_mem_info(SystemData system_data) {
   }
 }
 
-void LinuxParser::updateSystem_up_time(SystemData system_data) {
+void LinuxParser::updateSystemData_up_time(SystemData system_data) {
   string line = LinuxParser::getLineFromPath(kProcDirectory + kUptimeFilename);
   system_data._up_time__sec = LinuxParser::getLongSumFromWordsAt(line, {0});
+}
+
+void LinuxParser::updateSystemData_kStatFilename(SystemData system_data) {
+  string stat_line = "";
+  string procs_running_line = "";
+  string first = "";
+  string line = "";
+  std::ifstream filestream(kProcDirectory + kStatFilename);
+  if (filestream.is_open()) {
+    while (std::getline(filestream, line)) {
+      std::istringstream linestream(line);
+      linestream >> first;
+      if (first == "cpu")
+        stat_line = line;
+      else if (first == "procs_running")
+        procs_running_line = line;
+    }
+  }
+  vector<string> items = split(stat_line);
+  system_data._user__ct    = stol(items[1], nullptr, 10);
+  system_data._nice__ct    = stol(items[2], nullptr, 10);
+  system_data._system__ct  = stol(items[3], nullptr, 10);
+  system_data._idle__ct    = stol(items[4], nullptr, 10);
+  system_data._iowait__ct  = stol(items[5], nullptr, 10);
+  system_data._irq__ct     = stol(items[6], nullptr, 10);
+  system_data._softirq__ct = stol(items[7], nullptr, 10);
+  system_data._steal__ct   = stol(items[8], nullptr, 10);
+
+  system_data._procs_running = stoi(getWordAt(procs_running_line, 1), &sz);
 }
 
 ProcessorData LinuxParser::createProcessorData() {
