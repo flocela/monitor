@@ -10,7 +10,7 @@
 
 int main() {
   SystemFactory system_factory = SystemFactory();
-  System system = system_factory.createSystem(1, 1, 1);
+  System system = system_factory.createSystem(1, 1, 1, 1);
   NCursesDisplay::Display(system);
 }
 

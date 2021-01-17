@@ -49,7 +49,7 @@ std::string BasicSystem::Kernel() {
 }
 
 // TODO: Return the system's memory utilization
-float BasicSystem::::MemoryUtilization() { 
+float BasicSystem::MemoryUtilization() { 
     return LinuxParser::MemoryUtilization(); 
 }
 
