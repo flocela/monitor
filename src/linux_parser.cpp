@@ -355,14 +355,6 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
-// TODO: Read and return the system uptime
-// In seconds
-// !!!!!!!!!!!!!!!!!!!!!!!!!! DONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-long LinuxParser::UpTime() {
-  string line = LinuxParser::getLineFromPath(kProcDirectory + kUptimeFilename);
-  return LinuxParser::getLongSumFromWordsAt(line, {0});
-}
-
 // TODO: Read and return the number of jiffies for the system
 // !!!!!!!!!!!!!!!!!!!!!!!!!! DONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 long LinuxParser::Jiffies()  { 
