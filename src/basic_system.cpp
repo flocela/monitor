@@ -56,17 +56,17 @@ int BasicSystem::TotalProcesses() {
 
 // Return the number of processes actively running on the system
 int BasicSystem::RunningProcesses() { 
-    return LinuxParser::RunningProcesses(); 
+    return _sys_d._procs_running; 
 }
 
 // Return the system's kernel identifier (string)
 std::string BasicSystem::Kernel() { 
-    return LinuxParser::Kernel(); 
+    return _sys_d._kernel_version;
 }
 
 // Return the operating system name
 std::string BasicSystem::OperatingSystem() { 
-    return LinuxParser::OperatingSystem(); 
+    return _sys_d._os_name;
 }
 
 int BasicSystem::getSystemType() {
@@ -86,7 +86,7 @@ void BasicSystem::populateProcesses() {
     std::vector<Process> replacement = {};
     // if the process still exists, then create an object for it.
     // if not then it has been deleted since the vector of pids was made.
-    for (int pid: _system_data._pids) {
+    for (int pid: _sys_d._pids) {
         Process process = _process_factory.createProcess(pid);
         if (process.isValid())
             replacement.push_back(process);
