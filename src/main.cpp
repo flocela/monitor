@@ -2,9 +2,6 @@
 #include "system.h"
 #include "system_factory.h"
 
-#include "linux_parser.h"
-#include "format.h"
-#include "processor.h"
 #include <iostream>
 
 

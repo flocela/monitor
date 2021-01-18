@@ -9,9 +9,8 @@ System SystemFactory::createSystem( int system_type,
                                     int process_type) {
     ProcessorFactory processor_factory = ProcessorFactory();
     Processor processor = processor_factory.createProcessor(processor_type, processor_delta_time);
-    if (system_type == 1) {
-        return BasicSystem(1, 1);
-    }
-    else 
-        return BasicSystem(1, 1);
+    // different type would create different Systems. Only one type exists right now, so return BasicSystem.
+    System basic_system = BasicSystem(processor, 1);
+    basic_system.updateSystem();
+    return BasicSystem(processor, 1);
 }

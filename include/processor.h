@@ -9,7 +9,8 @@ using std::string;
 
 class Processor {
   public:
-    virtual float Utilization();  // TODO: See src/processor.cpp
+    virtual float Utilization();
+    virtual update();
 };
 
 #endif

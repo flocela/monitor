@@ -185,8 +185,9 @@ void LinuxParser::updateProcessData_Vm(int pid, ProcessData process_data) {
   }
 }
 
-SystemData LinuxParser::createSystemData() {
+LinuxParser::SystemData LinuxParser::createSystemData() {
   SystemData system_data = SystemData();
+  
 }
 
 void LinuxParser::updateSystemData_os_name(SystemData system_data) {
@@ -352,26 +353,6 @@ vector<int> LinuxParser::Pids() {
   }
   closedir(directory);
   return pids;
-}
-
-// TODO: Read and return the system memory utilization
-// !!!!!!!!!!!!!!!!!!!!!!!!!! DONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-float LinuxParser::MemoryUtilization() { 
-  string line;
-  int mem_total = 0;
-  int mem_free  = 0;
-
-  std::ifstream filestream(kProcDirectory + kMeminfoFilename);
-  if(filestream.is_open()) {
-    while(std::getline(filestream, line)) {
-      string name = LinuxParser::getStringBeforeColon(line);
-      if(name == "MemTotal")
-        mem_total = LinuxParser::getkB(line);
-      else if(name == "MemFree")
-        mem_free = LinuxParser::getkB(line);
-    }
-  }
-  return ( (float)(mem_total - mem_free) / (float)mem_total ); 
 }
 
 // TODO: Read and return the system uptime

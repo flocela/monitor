@@ -2,8 +2,6 @@
 #define SYSTEM_PARSER_H
 
 #include "process_data.h"
-#include "system_data.h"
-#include "processor_data.h"
 
 #include <fstream>
 #include <regex>
@@ -30,6 +28,24 @@ int TotalProcesses();
 int RunningProcesses();
 std::string OperatingSystem();
 std::string Kernel();
+struct SystemData {
+  std::string _os_name        = ""; // /ect/os-release
+  std::string _kernel_version = ""; // /proc/version
+  std::vector<int> _pids      = {};
+  float _mem_total__kB        = -1; // /proc/meminfo
+  float _mem_free__kB         = -1; // /proc/meminfo
+  long _up_time__sec          = -1; // /proc/uptime
+  long _user__ct              = -1; // /proc/stat/(line = cpu, field = 1)
+  long _nice__ct              = -1; // /proc/stat/(line = cpu, field = 2)
+  long _system__ct            = -1; // /proc/stat/(line = cpu, field = 3)
+  long _idle__ct              = -1; // /proc/stat/(line = cpu, field = 4)
+  long _iowait__ct            = -1; // /proc/stat/(line = cpu, field = 5)
+  long _irq__ct               = -1; // /proc/stat/(line = cpu, field = 6)
+  long _softirq__ct          = -1; // /proc/stat/(line = cpu, field = 7)
+  long _steal__ct             = -1; // /proc/stat/(line = cpu, field = 8)
+  int _procs_running          = -1; // /proc/stat/(field = procs_running)
+};
+SystemData getSystemData();
 
 // CPU
 enum CPUStates {

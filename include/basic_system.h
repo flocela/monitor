@@ -4,7 +4,6 @@
 #include "process_factory.h"
 #include "processor.h"
 #include "process.h"
-#include "system_data.h"
 #include "system.h"
 
 #include <string>
@@ -12,7 +11,8 @@
 
 class BasicSystem: virtual public System {
   public:
-    BasicSystem(int processor_type, int process_type);                           
+    BasicSystem(Processor processor, int process_type);
+    void updateSystem();                           
     Processor& Cpu();                   
     std::vector<Process>& Processes();  
     float MemoryUtilization();          
@@ -21,14 +21,20 @@ class BasicSystem: virtual public System {
     int RunningProcesses();             
     std::string Kernel();               
     std::string OperatingSystem();      
-    void updateSystem();
+    
+    int getSystemType();
+    int getProcessorType();
+    int getProcessesType();
   
   private:
-    SystemData _system_data; 
+    LinuxParser::SystemData _sys_d; 
     Processor _cpu;
     std::vector<Process> _processes = {};
     ProcessFactory _process_factory = ProcessFactory();
     void populateProcesses();
+    int _system_type;
+    int _processor_type;
+    int _processes_type;
 };
 
 #endif

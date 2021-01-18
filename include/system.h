@@ -18,6 +18,9 @@ class System {
     virtual std::string Kernel();               
     virtual std::string OperatingSystem();      
     virtual void updateSystem();
+    virtual int getSystemType();
+    virtual int getProcessorType();
+    virtual int getProcessesType();
 };
 
 #endif

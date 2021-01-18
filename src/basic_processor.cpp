@@ -6,7 +6,7 @@
 
 static std::string::size_type sz;
 
-BasicProcessor::BasicProcessor(int delta_time__sec) {
+BasicProcessor::update() {
   ProcessorData processor_data_one = LinuxParser::createProcessorData();
   std::this_thread::sleep_for(std::chrono::seconds(delta_time__sec));
   ProcessorData processor_data_two = LinuxParser::createProcessorData();
@@ -36,6 +36,10 @@ BasicProcessor::BasicProcessor(int delta_time__sec) {
   
   if (total_delta != 0.0)
     _cpu_util__percent = 100 *((total_delta - idle_delta)/total_delta);
+}
+
+BasicProcessor::BasicProcessor(int delta_time__sec) {
+  update();
 }
 
 // TODO: Return the aggregate CPU utilization
