@@ -46,12 +46,12 @@ float BasicSystem::MemoryUtilization() {
 
 // Return the number of seconds since the system started running
 long int BasicSystem::UpTime() { 
-    return LinuxParser::UpTime(); 
+    return _sys_d._up_time__sec
 }
 
 // Return the total number of processes on the system
 int BasicSystem::TotalProcesses() { 
-    return LinuxParser::TotalProcesses();
+    return _processes.size();
 }
 
 // Return the number of processes actively running on the system

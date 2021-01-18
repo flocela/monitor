@@ -325,13 +325,6 @@ string LinuxParser::OperatingSystem() {
   return value;
 }
 
-// DONE: An example of how to read data from the filesystem
-// !!!!!!!!!!!!!!!!!!!!!!!!!! DONE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-string LinuxParser::Kernel() {
-  string os, version, kernel;
-  string line = LinuxParser::getLineFromPath(kProcDirectory + kVersionFilename);
-  return LinuxParser::getWordAt(line, 2);
-}
 
 // TODO Probably get rid of this.
 // BONUS: Update this to use std::filesystem
@@ -419,19 +412,6 @@ float LinuxParser::CpuUtilization(int pid) {
   }
   else
     return -1;
-}
-
-// TODO: Read and return the total number of processes
-// Total number of current pids.
-int LinuxParser::TotalProcesses() {
-  vector<int> pids = LinuxParser::Pids();
-  return pids.size();
-}
-
-// TODO: Read and return the number of running processes
-int LinuxParser::RunningProcesses() { 
-  string line = LinuxParser::getLineStartingWith("procs_running", kProcDirectory + kStatFilename);
-  return LinuxParser::getIntSumFromWordsAt(line, {1});
 }
 
 // TODO: Read and return the command associated with a process
