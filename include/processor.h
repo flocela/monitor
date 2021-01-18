@@ -10,7 +10,7 @@ using std::string;
 class Processor {
   public:
     virtual float Utilization();
-    virtual update();
+    virtual void update();
 };
 
 #endif

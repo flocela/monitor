@@ -11,11 +11,13 @@ using std::string;
 class BasicProcessor:virtual public Processor {
   public:
     BasicProcessor(int delta_time__sec);
-    float Utilization();  // TODO: See src/processor.cpp
+    float Utilization();
+    void update();
 
   // TODO: Declare any necessary private members
   private:
     float _cpu_util__percent;
+    int _delta_time__sec = -1;
 };
 
 #endif

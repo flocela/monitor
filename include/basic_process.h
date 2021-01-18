@@ -1,5 +1,5 @@
-#ifndef PROCESS_H
-#define PROCESS_H
+#ifndef BASIC_PROCESS_H
+#define BASIC_PROCESS_H
 
 #include <string>
 
@@ -9,7 +9,7 @@ It contains relevant attributes as shown below
 */
 class Process {
  public:
-  Process(LinuxParser::ProcessData process_data);
+  Process(ProcessData process_data);
   int Pid();                               // TODO: See src/process.cpp
   std::string User();                      // TODO: See src/process.cpp
   std::string Command();                   // TODO: See src/process.cpp
