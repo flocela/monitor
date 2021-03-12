@@ -2,10 +2,11 @@
 #define PROCESS_FACTORY_H
 
 #include "process.h"
+#include <memory>
 
 class ProcessFactory {
     public:
-        Process createProcess(int pid);
+        std::unique_ptr<Process> createProcess(int pid, int type);
 };
 
 #endif

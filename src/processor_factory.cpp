@@ -1,11 +1,7 @@
 #include "processor_factory.h"
 #include "basic_processor.h"
 
-Processor ProcessorFactory::createProcessor(int processor_type, int time_delta) {
-    if (processor_type == 1) {
-        return BasicProcessor(time_delta);
-    }
-    else {
-        return BasicProcessor(time_delta);
-    }
+std::unique_ptr<Processor> ProcessorFactory::createProcessor(int processor_type, int time_delta) {
+    // Only one type of Processor, the BasicProcessor.
+    return std::make_unique<BasicProcessor>(time_delta);
 }

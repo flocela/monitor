@@ -1,15 +1,13 @@
-#include <thread>
-#include <chrono>
-#include "processor_data.h"
 #include "basic_processor.h"
 #include "linux_parser.h"
 
-static std::string::size_type sz;
+#include <thread>
+#include <chrono>
 
 void BasicProcessor::update() {
-  ProcessorData processor_data_one = LinuxParser::createProcessorData();
+  LinuxParser::ProcessorData processor_data_one = LinuxParser::createProcessorData();
   std::this_thread::sleep_for(std::chrono::seconds(_delta_time__sec));
-  ProcessorData processor_data_two = LinuxParser::createProcessorData();
+  LinuxParser::ProcessorData processor_data_two = LinuxParser::createProcessorData();
 
   float idle_one = processor_data_one._idle__ct + 
                    processor_data_one._iowait__ct;
@@ -35,14 +33,13 @@ void BasicProcessor::update() {
   float total_delta = total_two - total_one;
   
   if (total_delta != 0.0)
-    _cpu_util__percent = 100 *((total_delta - idle_delta)/total_delta);
+    _cpu_util__fraction = (total_delta - idle_delta)/total_delta;
 }
 
 BasicProcessor::BasicProcessor(int delta_time__sec): _delta_time__sec{delta_time__sec} {
   update();
 }
 
-// TODO: Return the aggregate CPU utilization
-float BasicProcessor::Utilization() { 
-  return _cpu_util__percent;
+float BasicProcessor::Utilization() const{ 
+  return _cpu_util__fraction;
 }

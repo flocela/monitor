@@ -38,7 +38,7 @@ void NCursesDisplay::DisplaySystem(System& system, WINDOW* window) {
   mvwprintw(window, ++row, 2, "CPU: ");
   wattron(window, COLOR_PAIR(1));
   mvwprintw(window, row, 10, "");
-  wprintw(window, ProgressBar(system.Cpu().Utilization()).c_str());
+  wprintw(window, ProgressBar(system.Cpu()->Utilization()).c_str());
   wattroff(window, COLOR_PAIR(1));
   mvwprintw(window, ++row, 2, "Memory: ");
   wattron(window, COLOR_PAIR(1));
@@ -55,7 +55,7 @@ void NCursesDisplay::DisplaySystem(System& system, WINDOW* window) {
   wrefresh(window);
 }
 
-void NCursesDisplay::DisplayProcesses(std::vector<Process>& processes,
+void NCursesDisplay::DisplayProcesses(std::vector<Process const*>const & processes,
                                       WINDOW* window, int n) {
   int row{0};
   int const pid_column{2};
@@ -72,18 +72,18 @@ void NCursesDisplay::DisplayProcesses(std::vector<Process>& processes,
   mvwprintw(window, row, time_column, "TIME+");
   mvwprintw(window, row, command_column, "COMMAND");
   wattroff(window, COLOR_PAIR(2));
-  std::vector<Process> copyProcesses = processes;
-  std::sort(copyProcesses.begin(), copyProcesses.end());
+  auto copyProcesses = processes;
+  std::sort(copyProcesses.begin(), copyProcesses.end(), [] (Process const* a, Process const* b) {return a->CpuUtilization() > b->CpuUtilization();} );
   for (int i = 0; i < n; ++i) {
-    mvwprintw(window, ++row, pid_column, to_string(processes[i].Pid()).c_str());
-    mvwprintw(window, row, user_column, processes[i].User().c_str());
-    float cpu = processes[i].CpuUtilization() * 100;
+    mvwprintw(window, ++row, pid_column, to_string(copyProcesses[i]->Pid()).c_str());
+    mvwprintw(window, row, user_column, copyProcesses[i]->User().c_str());
+    float cpu = copyProcesses[i]->CpuUtilization() * 100;
     mvwprintw(window, row, cpu_column, to_string(cpu).substr(0, 4).c_str());
-    mvwprintw(window, row, ram_column, processes[i].Ram().c_str());
+    mvwprintw(window, row, ram_column, copyProcesses[i]->Ram__MB().c_str());
     mvwprintw(window, row, time_column,
-              Format::ElapsedTime(processes[i].UpTime()).c_str());
+              Format::ElapsedTime(copyProcesses[i]->UpTime()).c_str());
     mvwprintw(window, row, command_column,
-              processes[i].Command().substr(0, window->_maxx - 46).c_str());
+              copyProcesses[i]->Command().substr(0, window->_maxx - 46).c_str());
   }
 }
 

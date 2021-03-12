@@ -3,25 +3,17 @@
 
 #include <string>
 
-/*
-Basic class for Process representation
-It contains relevant attributes as shown below
-*/
 class Process {
- public:
-  Process(LinuxParser::ProcessData process_data);
-  int Pid();                               // TODO: See src/process.cpp
-  std::string User();                      // TODO: See src/process.cpp
-  std::string Command();                   // TODO: See src/process.cpp
-  float CpuUtilization() const;                  // TODO: See src/process.cpp
-  std::string Ram();                       // TODO: See src/process.cpp
-  long int UpTime();                       // TODO: See src/process.cpp
-  bool operator<(Process const& a) const;  // TODO: See src/process.cpp
-  bool isValid();
-
-  // TODO: Declare any necessary private members
- private:
-   ProcessData _process_data;
+  public:
+    virtual int Pid() const = 0;                               
+    virtual std::string User() const = 0;                  
+    virtual std::string Command() const = 0;             
+    virtual float CpuUtilization() const = 0;          
+    virtual std::string Ram__MB() const = 0;                       
+    virtual long int UpTime() const = 0;                
+    virtual bool isValid() const = 0;
+    bool operator<(Process const& a) const;
+    static bool comparePtrToProcesses(const Process* const a, const Process* const b);
 };
 
 #endif

@@ -1,95 +1,65 @@
-#include "process.h"
-#include "processor.h"
-#include "system.h"
 #include "basic_system.h"
-#include "linux_parser.h"
-
-#include <unistd.h>
-#include <cstddef>
-#include <set>
-#include <string>
-#include <vector>
-#include <iostream>
-
-using std::set;
-using std::size_t;
-using std::string;
-using std::vector;
 
 // public
-BasicSystem::BasicSystem(Processor processor, int process_type): 
-    System{}, _cpu{processor} 
+BasicSystem::BasicSystem(std::unique_ptr<Processor> processor, int process_type):
+                            System{}, 
+                            _cpu{std::move(processor)},
+                            _process_type { process_type}
 {
     updateSystem();
 }
 
 void BasicSystem::updateSystem() {
     _sys_d = LinuxParser::createSystemData();
-    _cpu.update();
+    _cpu->update();
     populateProcesses();
 }
 
-// TODO: Return the system's CPU
-Processor& BasicSystem::Cpu() { 
-    return _cpu;
+Processor const * BasicSystem::Cpu() const{ 
+    return _cpu.get();
 }
 
-// Only returns valid processes.
-vector<Process>& BasicSystem::Processes() {
-    return _processes;
+vector<Process const *> BasicSystem::Processes() const {
+    vector<Process const *> return_vector;
+    for (auto& pr : _processes) {
+        return_vector.push_back(pr.get());
+    }
+    return return_vector;
 }
 
-// Return the system's memory utilization
-float BasicSystem::MemoryUtilization() { 
+float BasicSystem::MemoryUtilization() const { 
     return (float)(_sys_d._mem_total__kB - _sys_d._mem_free__kB) / (float)(_sys_d._mem_total__kB);
 }
 
-// Return the number of seconds since the system started running
-long int BasicSystem::UpTime() { 
-    return _sys_d._up_time__sec
+long int BasicSystem::UpTime() const { 
+    return _sys_d._up_time__sec;
 }
 
-// Return the total number of processes on the system
-int BasicSystem::TotalProcesses() { 
+int BasicSystem::TotalProcesses() const { 
     return _processes.size();
 }
 
-// Return the number of processes actively running on the system
-int BasicSystem::RunningProcesses() { 
+int BasicSystem::RunningProcesses() const { 
     return _sys_d._procs_running; 
 }
 
-// Return the system's kernel identifier (string)
-std::string BasicSystem::Kernel() { 
+string BasicSystem::Kernel() const { 
     return _sys_d._kernel_version;
 }
 
-// Return the operating system name
-std::string BasicSystem::OperatingSystem() { 
+string BasicSystem::OperatingSystem() const {
     return _sys_d._os_name;
 }
 
-int BasicSystem::getSystemType() {
-    return _system_type;
-}
-
-int BasicSystem::getProcessesType() {
-    return _processor_type;
-}
-
-int BasicSystem::getProcessesType() {
-    return _processes_type;
-}
-
-// private
 void BasicSystem::populateProcesses() {
-    std::vector<Process> replacement = {};
+    vector<std::unique_ptr<Process>> replacement = {};
     // if the process still exists, then create an object for it.
-    // if not then it has been deleted since the vector of pids was made.
+    // if not then it has been deleted since the vector of pids was made
     for (int pid: _sys_d._pids) {
-        Process process = _process_factory.createProcess(pid);
-        if (process.isValid())
-            replacement.push_back(process);
+        std::unique_ptr<Process> process = 
+            _process_factory.createProcess(pid, _process_type);
+        if (process->isValid()) 
+            replacement.push_back(std::move(process));
     }
-    _processes = replacement;
+    _processes = std::move(replacement);
 }
