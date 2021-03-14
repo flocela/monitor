@@ -23,19 +23,24 @@ float BasicProcess::CpuUtilization() const{
     return (process_total_time__sec/process_uptime__sec);
 }
 
-string BasicProcess::Command() const { 
+string BasicProcess::Command() const {
+    if (_process_data._cmdline.length() > 40) {
+        string short_string = _process_data._cmdline.substr(0, 37);
+        short_string.append("...");
+        return short_string;
+    }
     return _process_data._cmdline;
 }
 
 string BasicProcess::Ram__MB() const {
-    return to_string((_process_data._VmSize__kB)/1000);
+    return to_string((_process_data._VmData__kB)/1000);
 }
 
 string BasicProcess::User() const { 
     return _process_data._User;
  }
 
-// TODO: Return the age of this process (in seconds)
+// Return the age of this process (in seconds)
 long int BasicProcess::UpTime() const {
     return _process_data._sys_uptime__sec - _process_data._starttime__sec;
  }

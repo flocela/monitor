@@ -11,7 +11,8 @@ class BasicProcess: public Process {
     int Pid() const;                               
     std::string User() const;                      
     std::string Command() const;                   
-    float CpuUtilization() const;                 
+    float CpuUtilization() const;
+    // Returns VmData from proc/[pid]/stat                
     std::string Ram__MB() const;
     bool isValid() const;                       
     long int UpTime() const;

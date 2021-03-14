@@ -54,6 +54,7 @@ struct ProcessData {
 
     std::string _cmdline = ""; // /proc/pid/cmdline
     int _VmSize__kB      = -1; // /proc/pid/status
+    int _VmData__kB      = -1; // /proc/pid/status
     std::string _Uid     = ""; // /proc/pid/status
     std::string _User    = ""; // /etc/password (matches Uid)
 

@@ -84,14 +84,14 @@ LinuxParser::ProcessData LinuxParser::createProcessData(int pid) {
   updateProcessData_UidUser(pid_str, process_data);
   updateProcessData_Vm(pid, process_data);
 
-  if ( process_data._cmdline.empty()  ||
-       process_data._Uid.empty()      ||
-       process_data._User.empty()     ||
-       process_data._utime__ct == -1  ||
-       process_data._VmSize__kB == -1   )
-    process_data._is_valid = false;
-  else
-    process_data._is_valid = true;
+  process_data._is_valid = 
+    ( ( process_data._cmdline.empty()  ||
+        process_data._Uid.empty()      ||
+        process_data._User.empty()     ||
+        process_data._utime__ct == -1  ||
+        process_data._VmSize__kB == -1   ) ?
+      false : 
+      true );
 
   return process_data;
 }
@@ -174,10 +174,16 @@ string LinuxParser:: getUserNameFromUid (string Uid) {
 }
 
 void LinuxParser::updateProcessData_Vm(int pid, ProcessData& process_data) {
-  string line = 
-    getLineStartingWith("VmSize:", kProcDirectory + std::to_string(pid) + kStatusFilename);
-  if (!line.empty())
-    process_data._VmSize__kB = getkB(line);
+  string line;
+  std::ifstream filestream(kProcDirectory + std::to_string(pid) + kStatusFilename);
+  if (filestream.is_open()) {
+    while(std::getline(filestream, line)) {
+      if("VmSize" == getTextBeforeColon(line)) 
+        process_data._VmSize__kB = getkB(line);
+      else if ("VmData" == getTextBeforeColon(line))
+        process_data._VmData__kB = getkB(line);
+    }
+  }
 }
 
 void LinuxParser::updateSystemData_os_name(SystemData& system_data) {

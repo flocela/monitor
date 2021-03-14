@@ -16,7 +16,7 @@ std::unique_ptr<System> SystemFactory::createSystem(
         std::unique_ptr<BasicSystem> basic_system = 
             std::make_unique<BasicSystem>(std::move(p_processor), process_type);
         basic_system->updateSystem();
-        return std::move(basic_system);
+        return basic_system;
     }
     return nullptr;
 }

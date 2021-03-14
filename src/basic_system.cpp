@@ -59,7 +59,7 @@ void BasicSystem::populateProcesses() {
         std::unique_ptr<Process> process = 
             _process_factory.createProcess(pid, _process_type);
         if (process->isValid()) 
-            replacement.push_back(std::move(process));
+            replacement.emplace_back(std::move(process));
     }
     _processes = std::move(replacement);
 }
